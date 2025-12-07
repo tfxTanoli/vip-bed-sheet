@@ -7,12 +7,102 @@ import { Card } from "../components/ui/Card";
 export default function SignupPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        terms: false
+    });
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
+
+    const validateField = (name, value, allData = formData) => {
+        let error = "";
+
+        switch (name) {
+            case "name":
+                if (!value.trim()) error = "Full Name is required";
+                else if (value.trim().length < 2) error = "Name must be at least 2 characters";
+                break;
+            case "email":
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!value) error = "Email is required";
+                else if (!emailRegex.test(value)) error = "Please enter a valid email address";
+                break;
+            case "password":
+                if (!value) error = "Password is required";
+                else if (value.length < 8) error = "Password must be at least 8 characters";
+                else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) error = "Password must contain uppercase, lowercase and number";
+                break;
+            case "confirmPassword":
+                if (!value) error = "Please confirm your password";
+                else if (value !== allData.password) error = "Passwords do not match";
+                break;
+            case "terms":
+                if (!value) error = "You must accept the terms and privacy policy";
+                break;
+        }
+        return error;
+    };
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        const newValue = type === "checkbox" ? checked : value;
+        const newFormData = { ...formData, [name]: newValue };
+
+        setFormData(newFormData);
+
+        // Real-time validation if touched
+        if (touched[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: validateField(name, newValue, newFormData)
+            }));
+
+            // Re-validate confirmPassword if password changes
+            if (name === "password" && touched.confirmPassword) {
+                setErrors(prev => ({
+                    ...prev,
+                    confirmPassword: validateField("confirmPassword", formData.confirmPassword, newFormData)
+                }));
+            }
+        }
+    };
+
+    const handleBlur = (e) => {
+        const { name, value, type, checked } = e.target;
+        const val = type === "checkbox" ? checked : value;
+        setTouched(prev => ({ ...prev, [name]: true }));
+        setErrors(prev => ({
+            ...prev,
+            [name]: validateField(name, val)
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => setIsLoading(false), 2000);
+
+        const newErrors = {};
+        Object.keys(formData).forEach(key => {
+            const error = validateField(key, formData[key]);
+            if (error) newErrors[key] = error;
+        });
+
+        setErrors(newErrors);
+        setTouched({
+            name: true,
+            email: true,
+            password: true,
+            confirmPassword: true,
+            terms: true
+        });
+
+        if (Object.keys(newErrors).length === 0) {
+            setIsLoading(true);
+            // Simulate API call
+            setTimeout(() => setIsLoading(false), 2000);
+        }
     };
 
     return (
@@ -34,20 +124,25 @@ export default function SignupPage() {
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                         <div className="space-y-2">
                             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Full Name
                             </label>
                             <div className="relative">
-                                <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                                <User className={`absolute left-3 top-3 h-5 w-5 ${errors.name ? "text-red-500" : "text-muted-foreground"}`} />
                                 <input
+                                    name="name"
                                     type="text"
                                     placeholder="John Doe"
-                                    className="input-field pl-10"
+                                    className={`input-field pl-10 ${errors.name ? "border-red-500 focus:ring-red-500" : ""}`}
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     required
                                 />
                             </div>
+                            {errors.name && <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.name}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -55,14 +150,19 @@ export default function SignupPage() {
                                 Email
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                                <Mail className={`absolute left-3 top-3 h-5 w-5 ${errors.email ? "text-red-500" : "text-muted-foreground"}`} />
                                 <input
+                                    name="email"
                                     type="email"
                                     placeholder="name@example.com"
-                                    className="input-field pl-10"
+                                    className={`input-field pl-10 ${errors.email ? "border-red-500 focus:ring-red-500" : ""}`}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     required
                                 />
                             </div>
+                            {errors.email && <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.email}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -70,11 +170,15 @@ export default function SignupPage() {
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                                <Lock className={`absolute left-3 top-3 h-5 w-5 ${errors.password ? "text-red-500" : "text-muted-foreground"}`} />
                                 <input
+                                    name="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Create a password"
-                                    className="input-field pl-10 pr-10"
+                                    className={`input-field pl-10 pr-10 ${errors.password ? "border-red-500 focus:ring-red-500" : ""}`}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     required
                                 />
                                 <button
@@ -89,6 +193,7 @@ export default function SignupPage() {
                                     )}
                                 </button>
                             </div>
+                            {errors.password && <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.password}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -96,21 +201,36 @@ export default function SignupPage() {
                                 Confirm Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                                <Lock className={`absolute left-3 top-3 h-5 w-5 ${errors.confirmPassword ? "text-red-500" : "text-muted-foreground"}`} />
                                 <input
+                                    name="confirmPassword"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Confirm your password"
-                                    className="input-field pl-10 pr-10"
+                                    className={`input-field pl-10 pr-10 ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : ""}`}
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     required
                                 />
                             </div>
+                            {errors.confirmPassword && <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.confirmPassword}</p>}
                         </div>
 
-                        <div className="flex items-start space-x-2 pt-2">
-                            <input type="checkbox" className="mt-1 rounded border-gray-300 text-primary focus:ring-primary" required />
-                            <span className="text-sm text-muted-foreground">
-                                I agree to the <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
-                            </span>
+                        <div className="space-y-2">
+                            <div className="flex items-start space-x-2 pt-2">
+                                <input
+                                    name="terms"
+                                    type="checkbox"
+                                    className="mt-1 rounded border-gray-300 text-primary focus:ring-primary"
+                                    checked={formData.terms}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <span className={`text-sm ${errors.terms ? "text-red-500" : "text-muted-foreground"}`}>
+                                    I agree to the <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                                </span>
+                            </div>
+                            {errors.terms && <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.terms}</p>}
                         </div>
 
                         <Button

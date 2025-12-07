@@ -8,18 +8,73 @@ import { useAuth } from "../context/AuthContext";
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        email: "",
+        password: ""
+    });
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
+
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    const validateField = (name, value) => {
+        let error = "";
+        if (name === "email") {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!value) error = "Email is required";
+            else if (!emailRegex.test(value)) error = "Please enter a valid email address";
+        } else if (name === "password") {
+            if (!value) error = "Password is required";
+            else if (value.length < 8) error = "Password must be at least 8 characters";
+        }
+        return error;
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+
+        // Real-time validation if field has been touched
+        if (touched[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: validateField(name, value)
+            }));
+        }
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        setTouched(prev => ({ ...prev, [name]: true }));
+        setErrors(prev => ({
+            ...prev,
+            [name]: validateField(name, value)
+        }));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            login({ email: "user@example.com", name: "Demo User" });
-            setIsLoading(false);
-            navigate("/");
-        }, 1500);
+
+        // Validate all fields
+        const newErrors = {};
+        Object.keys(formData).forEach(key => {
+            const error = validateField(key, formData[key]);
+            if (error) newErrors[key] = error;
+        });
+
+        setErrors(newErrors);
+        setTouched({ email: true, password: true });
+
+        if (Object.keys(newErrors).length === 0) {
+            setIsLoading(true);
+            // Simulate API call
+            setTimeout(() => {
+                login({ email: formData.email, name: "Demo User" });
+                setIsLoading(false);
+                navigate("/");
+            }, 1500);
+        }
     };
 
     return (
@@ -41,20 +96,27 @@ export default function LoginPage() {
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                         <div className="space-y-2">
                             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Email
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                                <Mail className={`absolute left-3 top-3 h-5 w-5 ${errors.email ? "text-red-500" : "text-muted-foreground"}`} />
                                 <input
+                                    name="email"
                                     type="email"
                                     placeholder="name@example.com"
-                                    className="input-field pl-10"
+                                    className={`input-field pl-10 ${errors.email ? "border-red-500 focus:ring-red-500" : ""}`}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     required
                                 />
                             </div>
+                            {errors.email && (
+                                <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.email}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -62,11 +124,15 @@ export default function LoginPage() {
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                                <Lock className={`absolute left-3 top-3 h-5 w-5 ${errors.password ? "text-red-500" : "text-muted-foreground"}`} />
                                 <input
+                                    name="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    className="input-field pl-10 pr-10"
+                                    className={`input-field pl-10 pr-10 ${errors.password ? "border-red-500 focus:ring-red-500" : ""}`}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     required
                                 />
                                 <button
@@ -81,6 +147,9 @@ export default function LoginPage() {
                                     )}
                                 </button>
                             </div>
+                            {errors.password && (
+                                <p className="text-xs text-red-500 font-medium animate-fade-in">{errors.password}</p>
+                            )}
                         </div>
 
                         <div className="flex items-center justify-between text-sm">
