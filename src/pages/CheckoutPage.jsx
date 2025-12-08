@@ -6,11 +6,14 @@ import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { db } from "../../firebase";
 import { formatPrice } from "../lib/utils";
 
 export default function CheckoutPage() {
     const navigate = useNavigate();
     const { items, cartTotal, clearCart } = useCart();
+    const { user } = useAuth();
     const [step, setStep] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderComplete, setOrderComplete] = useState(false);
@@ -48,11 +51,43 @@ export default function CheckoutPage() {
         }
 
         setIsProcessing(true);
-        // Simulate payment processing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setIsProcessing(false);
-        setOrderComplete(true);
-        clearCart();
+
+        try {
+            // Simulate payment processing
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            // Save order to Firebase if user is logged in
+            if (user) {
+                const orderData = {
+                    items: items,
+                    amount: total,
+                    shippingDetails: {
+                        name: `${formData.firstName} ${formData.lastName}`,
+                        email: formData.email,
+                        address: formData.address,
+                        city: formData.city,
+                        state: formData.state,
+                        zipCode: formData.zipCode,
+                        country: formData.country,
+                        phone: formData.phone
+                    },
+                    orderDate: new Date().toISOString(),
+                    status: "Pending", // Default status
+                    paymentMethod: "Cash on Delivery",
+                    orderId: `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+                };
+
+                await db.ref(`orders/${user.uid}`).push(orderData);
+            }
+
+            setIsProcessing(false);
+            setOrderComplete(true);
+            clearCart();
+        } catch (error) {
+            console.error("Error placing order:", error);
+            setIsProcessing(false);
+            // Optionally handle error state here
+        }
     };
 
     if (items.length === 0 && !orderComplete) {
