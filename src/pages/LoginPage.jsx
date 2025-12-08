@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowRight, Mail, Lock, Facebook, Chrome } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Mail, Lock, Facebook } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
+import { GoogleIcon } from "../components/icons/GoogleIcon";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -206,7 +207,7 @@ export default function LoginPage() {
 
                         <div className="grid grid-cols-2 gap-4 mt-6">
                             <Button variant="outline" className="h-11 hover:bg-accent hover:text-accent-foreground">
-                                <Chrome className="mr-2 h-4 w-4" />
+                                <GoogleIcon className="mr-2 h-4 w-4" />
                                 Google
                             </Button>
                             <Button variant="outline" className="h-11 hover:bg-accent hover:text-accent-foreground">

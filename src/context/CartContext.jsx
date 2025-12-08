@@ -159,16 +159,12 @@ export function CartProvider({ children }) {
         dispatch({ type: "CLEAR_CART" });
     };
 
-    const getCartTotal = () => {
-        return state.items.reduce(
-            (total, item) => total + item.price * item.quantity,
-            0
-        );
-    };
+    const cartTotal = state.items.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+    );
 
-    const getCartCount = () => {
-        return state.items.reduce((count, item) => count + item.quantity, 0);
-    };
+    const cartCount = state.items.reduce((count, item) => count + item.quantity, 0);
 
     return (
         <CartContext.Provider
@@ -178,8 +174,8 @@ export function CartProvider({ children }) {
                 removeFromCart,
                 updateQuantity,
                 clearCart,
-                getCartTotal,
-                getCartCount,
+                cartTotal,
+                cartCount,
             }}
         >
             {children}
