@@ -43,7 +43,7 @@ export default function ProductPage() {
 
     const handleAddToCart = () => {
         if (!isAuthenticated) {
-            alert("Please login to add items to cart");
+            alert("Please Login first to add items to your cart");
             navigate("/login");
             return;
         }

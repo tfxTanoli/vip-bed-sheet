@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Sun, Moon, Menu, X, Bed, LogOut, User } from "lucide-react";
 import { Button } from "./ui/Button";
 import { useTheme } from "../context/ThemeContext";
@@ -9,10 +9,17 @@ import { Badge } from "./ui/Badge";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const { theme, setTheme } = useTheme();
     const { cartCount } = useCart();
     const { user, logout, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate("/");
+    };
 
     const navLinks = [
         { name: "Home", path: "/" },
@@ -64,8 +71,14 @@ export default function Navbar() {
                             )}
                         </Button>
 
-                        <Link to="/cart" className="relative">
-                            <Button variant="ghost" size="icon">
+                        <div className="relative">
+                            <Button variant="ghost" size="icon" onClick={() => {
+                                if (isAuthenticated) {
+                                    navigate("/cart");
+                                } else {
+                                    navigate("/login");
+                                }
+                            }}>
                                 <ShoppingCart className="w-5 h-5" />
                                 {cartCount > 0 && (
                                     <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 text-xs animate-fade-in">
@@ -73,7 +86,7 @@ export default function Navbar() {
                                     </Badge>
                                 )}
                             </Button>
-                        </Link>
+                        </div>
 
                         {/* Login/User Button for Desktop */}
                         {isAuthenticated ? (
@@ -106,7 +119,7 @@ export default function Navbar() {
                                         </Link>
                                         <button
                                             onClick={() => {
-                                                logout();
+                                                handleLogout();
                                                 setIsProfileOpen(false);
                                             }}
                                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -159,7 +172,7 @@ export default function Navbar() {
                                                 Profile
                                             </Button>
                                         </Link>
-                                        <Button variant="ghost" size="sm" onClick={() => { logout(); setIsMenuOpen(false); }}>
+                                        <Button variant="ghost" size="sm" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>
                                             Logout
                                         </Button>
                                     </div>

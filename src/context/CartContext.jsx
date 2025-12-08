@@ -1,4 +1,7 @@
-import { createContext, useContext, useReducer, useEffect } from "react";
+import { createContext, useContext, useReducer, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
+import { db } from "../../firebase";
+import { ref, set, get } from "firebase/database";
 
 const CartContext = createContext();
 
@@ -50,22 +53,97 @@ const cartReducer = (state, action) => {
 
 export function CartProvider({ children }) {
     const [state, dispatch] = useReducer(cartReducer, { items: [] });
+    const { user } = useAuth();
+    const [isCartLoaded, setIsCartLoaded] = useState(false);
 
+    // Load local cart initially (for guests or before auth checks)
     useEffect(() => {
         const savedCart = localStorage.getItem("bedsheet-cart");
-        if (savedCart) {
-            dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
+        if (savedCart && !user) {
+            try {
+                dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
+                setIsCartLoaded(true); // Treat local load as "loaded" for guests
+            } catch (e) {
+                console.error("Failed to parse local cart", e);
+            }
+        } else if (!user) {
+            setIsCartLoaded(true); // Nothing to load, but we are ready
         }
-    }, []);
+    }, [user]);
 
+    // Sync with Firebase when User changes (Login/Logout)
     useEffect(() => {
-        localStorage.setItem("bedsheet-cart", JSON.stringify(state.items));
-    }, [state.items]);
+        if (user) {
+            setIsCartLoaded(false); // Reset loading state when user switches
+            // User Logged In
+            const cartRef = ref(db, `users/${user.uid}/cart`);
 
-    const addToCart = (product, quantity = 1, size = "Queen") => {
+            // Check for guest items
+            const guestCart = localStorage.getItem("bedsheet-cart");
+            const localItems = guestCart ? JSON.parse(guestCart) : [];
+
+            get(cartRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dbCart = snapshot.val();
+
+                    if (localItems.length > 0 && (!dbCart || dbCart.length === 0)) {
+                        // Push Local to DB
+                        set(cartRef, localItems);
+                        dispatch({ type: "LOAD_CART", payload: localItems });
+                    } else {
+                        // Load DB
+                        dispatch({ type: "LOAD_CART", payload: dbCart });
+                    }
+                } else {
+                    // DB empty. If we have local items, push them!
+                    if (localItems.length > 0) {
+                        set(cartRef, localItems);
+                        dispatch({ type: "LOAD_CART", payload: localItems });
+                    } else {
+                        dispatch({ type: "LOAD_CART", payload: [] });
+                    }
+                }
+
+                // Clear local storage after syncing so it doesn't leak
+                localStorage.removeItem("bedsheet-cart");
+                setIsCartLoaded(true); // Now we are loaded and can save subsequent changes
+
+            }).catch(err => {
+                console.error("Error loading cart:", err);
+                setIsCartLoaded(true); // Even if error, we should probably allow interaction?
+            });
+        } else {
+            // User Logged Out: Load from local storage (Guest Cart)
+            const savedCart = localStorage.getItem("bedsheet-cart");
+            dispatch({ type: "LOAD_CART", payload: savedCart ? JSON.parse(savedCart) : [] });
+            setIsCartLoaded(true);
+        }
+    }, [user]);
+
+    // Save to Storage (Local OR DB) whenever cart changes
+    useEffect(() => {
+        if (!isCartLoaded) return; // Block saving until initial load is complete!
+
+        if (user) {
+            // Authenticated: Save ONLY to DB
+            const saveToDb = async () => {
+                try {
+                    await set(ref(db, `users/${user.uid}/cart`), state.items);
+                } catch (error) {
+                    console.error("Error syncing cart to DB:", error);
+                }
+            };
+            saveToDb();
+        } else {
+            // Guest: Save ONLY to Local Storage
+            localStorage.setItem("bedsheet-cart", JSON.stringify(state.items));
+        }
+    }, [state.items, user, isCartLoaded]);
+
+    const addToCart = (product, quantity = 1, size = "Queen", color = "") => {
         dispatch({
             type: "ADD_TO_CART",
-            payload: { ...product, quantity, size },
+            payload: { ...product, quantity, size, color },
         });
     };
 
