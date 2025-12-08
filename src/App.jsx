@@ -15,6 +15,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ContactPage from "./pages/ContactPage";
 import ProfilePage from "./pages/ProfilePage";
+import LegalPage from "./pages/LegalPage";
 
 function App() {
   return (
@@ -37,6 +38,8 @@ function App() {
                   <Route path="/signup" element={<SignupPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/terms" element={<LegalPage defaultTab="terms" />} />
+                  <Route path="/privacy" element={<LegalPage defaultTab="privacy" />} />
                 </Routes>
               </main>
               <Footer />

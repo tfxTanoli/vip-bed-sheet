@@ -121,17 +121,15 @@ export default function Footer() {
                             © {currentYear} DreamWeave. All rights reserved.
                         </p>
                         <div className="flex space-x-6">
-                            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
-                                (link) => (
-                                    <a
-                                        key={link}
-                                        href="#"
-                                        className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
-                                    >
-                                        {link}
-                                    </a>
-                                )
-                            )}
+                            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                                Privacy Policy
+                            </Link>
+                            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                                Terms of Service
+                            </Link>
+                            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                                Cookie Policy
+                            </a>
                         </div>
                     </div>
                 </div>
