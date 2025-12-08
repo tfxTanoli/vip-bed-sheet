@@ -10,7 +10,7 @@ import { formatPrice } from "../lib/utils";
 
 export default function CheckoutPage() {
     const navigate = useNavigate();
-    const { items, getCartTotal, clearCart } = useCart();
+    const { items, cartTotal, clearCart } = useCart();
     const [step, setStep] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderComplete, setOrderComplete] = useState(false);
@@ -35,7 +35,7 @@ export default function CheckoutPage() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const subtotal = getCartTotal();
+    const subtotal = cartTotal;
     const shipping = subtotal > 100 ? 0 : 9.99;
     const tax = subtotal * 0.08;
     const total = subtotal + shipping + tax;

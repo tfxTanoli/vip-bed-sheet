@@ -6,7 +6,7 @@ import { useCart } from "../context/CartContext";
 import { formatPrice } from "../lib/utils";
 
 export default function CartPage() {
-    const { items, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+    const { items, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
 
     if (items.length === 0) {
         return (
@@ -33,7 +33,7 @@ export default function CartPage() {
         );
     }
 
-    const subtotal = getCartTotal();
+    const subtotal = cartTotal;
     const shipping = subtotal > 100 ? 0 : 9.99;
     const tax = subtotal * 0.08;
     const total = subtotal + shipping + tax;
