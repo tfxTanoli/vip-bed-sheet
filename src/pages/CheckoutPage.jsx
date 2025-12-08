@@ -254,6 +254,21 @@ export default function CheckoutPage() {
                                         <h2 className="text-xl font-heading font-semibold">Payment Information</h2>
                                     </div>
 
+                                    {/* Cash on Delivery UI */}
+                                    <div className="text-center py-6 space-y-4">
+                                        <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+                                            <Truck className="w-8 h-8 text-green-600" />
+                                        </div>
+                                        <h3 className="text-lg font-semibold">Cash on Delivery</h3>
+                                        <p className="text-muted-foreground">
+                                            Pay securely with cash when your order allows.
+                                            <br />
+                                            No online payment required.
+                                        </p>
+                                    </div>
+
+                                    {/* Online Payment (Commented out for future use) */}
+                                    {/*
                                     <div className="grid gap-6">
                                         <div>
                                             <Label htmlFor="cardNumber">Card Number</Label>
@@ -313,6 +328,7 @@ export default function CheckoutPage() {
                                         <Lock className="w-4 h-4" />
                                         <span>Your payment information is encrypted and secure</span>
                                     </div>
+                                    */}
 
                                     <div className="flex gap-4 mt-8">
                                         <Button
