@@ -53,7 +53,7 @@ export default function LoginPage() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validate all fields
@@ -68,12 +68,18 @@ export default function LoginPage() {
 
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true);
-            // Simulate API call
-            setTimeout(() => {
-                login({ email: formData.email, name: "Demo User" });
-                setIsLoading(false);
+            try {
+                await login(formData.email, formData.password);
                 navigate("/");
-            }, 1500);
+            } catch (error) {
+                console.error("Login Error:", error);
+                setErrors(prev => ({
+                    ...prev,
+                    root: "Invalid email or password"
+                }));
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -94,6 +100,11 @@ export default function LoginPage() {
                         <p className="text-muted-foreground">
                             Enter your details to access your account
                         </p>
+                        {errors.root && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm px-4 py-3 rounded-lg animate-fade-in mt-4">
+                                {errors.root}
+                            </div>
+                        )}
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6" noValidate>

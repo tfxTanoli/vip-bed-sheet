@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, Award, Leaf, Moon, Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import ProductCard from "../components/ProductCard";
-import { products, testimonials, features } from "../data/products";
+import { db } from "../../firebase";
+import { testimonials, features } from "../data/products";
 
 const iconMap = {
     Sparkles: Sparkles,
@@ -15,6 +16,23 @@ const iconMap = {
 
 export default function HomePage() {
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        const productsRef = db.ref('products');
+        productsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // Convert object to array if needed, but our seed data is an array
+                const productsList = Array.isArray(data) ? data : Object.values(data);
+                setProducts(productsList);
+            }
+        });
+
+        // Cleanup subscription
+        return () => productsRef.off();
+    }, []);
+
     const featuredProducts = products.slice(0, 4);
 
     const nextTestimonial = () => {
@@ -207,8 +225,8 @@ export default function HomePage() {
                                         key={index}
                                         onClick={() => setCurrentTestimonial(index)}
                                         className={`h-2 rounded-full transition-all duration-300 ${index === currentTestimonial
-                                                ? "bg-primary w-8"
-                                                : "bg-muted-foreground/30 w-2 hover:bg-primary/50"
+                                            ? "bg-primary w-8"
+                                            : "bg-muted-foreground/30 w-2 hover:bg-primary/50"
                                             }`}
                                     />
                                 ))}

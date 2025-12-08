@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { Eye, EyeOff, ArrowRight, Mail, Lock, User, Facebook, Chrome } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -16,6 +17,9 @@ export default function SignupPage() {
     });
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
+
+    const { signup } = useAuth();
+    const navigate = useNavigate();
 
     const validateField = (name, value, allData = formData) => {
         let error = "";
@@ -80,7 +84,7 @@ export default function SignupPage() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const newErrors = {};
@@ -100,8 +104,24 @@ export default function SignupPage() {
 
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true);
-            // Simulate API call
-            setTimeout(() => setIsLoading(false), 2000);
+            try {
+                await signup(formData.email, formData.password, formData.name);
+                navigate("/");
+            } catch (error) {
+                console.error("Signup Error:", error);
+                let message = "Failed to create account.";
+                if (error.code === 'auth/email-already-in-use') {
+                    message = "Email is already registered.";
+                    setErrors(prev => ({ ...prev, email: message }));
+                } else if (error.code === 'auth/weak-password') {
+                    message = "Password should be at least 6 characters.";
+                    setErrors(prev => ({ ...prev, password: message }));
+                } else {
+                    setErrors(prev => ({ ...prev, root: message }));
+                }
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -122,6 +142,11 @@ export default function SignupPage() {
                         <p className="text-muted-foreground">
                             Join DreamWeave for exclusive offers and updates
                         </p>
+                        {errors.root && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm px-4 py-3 rounded-lg animate-fade-in">
+                                {errors.root}
+                            </div>
+                        )}
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5" noValidate>

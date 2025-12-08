@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Sun, Moon, Menu, X, Bed, LogOut } from "lucide-react";
+import { ShoppingCart, Sun, Moon, Menu, X, Bed, LogOut, User } from "lucide-react";
 import { Button } from "./ui/Button";
 import { useTheme } from "../context/ThemeContext";
 import { useCart } from "../context/CartContext";
@@ -9,6 +9,7 @@ import { Badge } from "./ui/Badge";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const { theme, setTheme } = useTheme();
     const { cartCount } = useCart();
     const { user, logout, isAuthenticated } = useAuth();
@@ -76,11 +77,44 @@ export default function Navbar() {
 
                         {/* Login/User Button for Desktop */}
                         {isAuthenticated ? (
-                            <div className="hidden md:flex items-center gap-4">
-                                <span className="text-sm font-medium">Hi, {user?.name?.split(" ")[0]}</span>
-                                <Button variant="ghost" size="icon" onClick={logout} title="Logout">
-                                    <LogOut className="w-5 h-5" />
+                            <div className="hidden md:block relative">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                    className="relative"
+                                >
+                                    <User className="w-5 h-5" />
                                 </Button>
+
+                                {isProfileOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 animate-fade-in z-50">
+                                        <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                {user?.displayName || "User"}
+                                            </p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                {user?.email}
+                                            </p>
+                                        </div>
+                                        <Link
+                                            to="/profile"
+                                            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            My Profile
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                logout();
+                                                setIsProfileOpen(false);
+                                            }}
+                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        >
+                                            Sign out
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <Link to="/login" className="hidden md:block">
@@ -118,10 +152,17 @@ export default function Navbar() {
                             ))}
                             {isAuthenticated ? (
                                 <div className="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-accent">
-                                    <span className="text-foreground/80 font-medium">Hi, {user?.name?.split(" ")[0]}</span>
-                                    <Button variant="ghost" size="sm" onClick={() => { logout(); setIsMenuOpen(false); }}>
-                                        Logout
-                                    </Button>
+                                    <span className="text-foreground/80 font-medium">Hi, {user?.displayName?.split(" ")[0] || "User"}</span>
+                                    <div className="flex gap-2">
+                                        <Link to="/profile">
+                                            <Button variant="ghost" size="sm" onClick={() => setIsMenuOpen(false)}>
+                                                Profile
+                                            </Button>
+                                        </Link>
+                                        <Button variant="ghost" size="sm" onClick={() => { logout(); setIsMenuOpen(false); }}>
+                                            Logout
+                                        </Button>
+                                    </div>
                                 </div>
                             ) : (
                                 <Link
