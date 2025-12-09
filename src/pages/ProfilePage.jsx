@@ -250,7 +250,19 @@ export default function ProfilePage() {
                                                     </div>
                                                     <span>{item.name} (x{item.quantity})</span>
                                                 </div>
-                                                <span>{formatPrice(item.price * item.quantity)}</span>
+                                                <div className="flex items-center gap-4">
+                                                    <span>{formatPrice(item.price * item.quantity)}</span>
+                                                    {order.status === 'Delivered' && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 text-xs"
+                                                            onClick={() => navigate(`/product/${item.id}`)}
+                                                        >
+                                                            Write Review
+                                                        </Button>
+                                                    )}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
