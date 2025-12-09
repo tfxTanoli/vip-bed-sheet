@@ -17,6 +17,7 @@ import ContactPage from "./pages/ContactPage";
 import ProfilePage from "./pages/ProfilePage";
 import LegalPage from "./pages/LegalPage";
 import ReturnsPage from "./pages/ReturnsPage";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/terms" element={<LegalPage defaultTab="terms" />} />
                   <Route path="/privacy" element={<LegalPage defaultTab="privacy" />} />
+                  <Route path="/cookie-policy" element={<CookiePolicyPage />} />
                   <Route path="/returns" element={<ReturnsPage />} />
                 </Routes>
               </main>
