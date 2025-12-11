@@ -245,10 +245,10 @@ export default function HomePage() {
                     <Card className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 text-white p-12 md:p-24 text-center rounded-3xl shadow-2xl">
                         <div className="relative z-10 max-w-3xl mx-auto space-y-8">
                             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight">
-                                Ready for the Best Sleep of Your Life?
+                                At VIP Bed Sheets, we believe that quality sleep is the foundation of a great life.
                             </h2>
                             <p className="text-xl opacity-90 leading-relaxed">
-                                Join thousands of happy sleepers and experience the DreamWeave difference.
+                                Join the VIP Bed Sheets family and discover why over 50,000 customers trust us for their best sleep.
                                 100-night risk-free trial included.
                             </p>
                             <Link to="/shop">

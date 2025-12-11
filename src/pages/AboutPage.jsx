@@ -96,7 +96,7 @@ export default function AboutPage() {
                                 Crafting the Perfect Night's Sleep
                             </h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                At DreamWeave, we believe that quality sleep is the foundation of a
+                                At VIP Bed Sheets, we believe that quality sleep is the foundation of a
                                 fulfilling life. That's why we've dedicated ourselves to creating
                                 bedding that doesn't just look beautiful—it transforms your sleep
                                 experience entirely.
@@ -196,7 +196,7 @@ export default function AboutPage() {
                             Meet the <span className="gradient-text">Team</span>
                         </h2>
                         <p className="text-lg text-muted-foreground">
-                            The passionate people behind DreamWeave.
+                            The passionate people behind VIP Bed Sheets.
                         </p>
                     </div>
                     <div className="grid md:grid-cols-3 gap-8">
@@ -232,7 +232,7 @@ export default function AboutPage() {
                                 Ready to Experience the Difference?
                             </h2>
                             <p className="text-lg opacity-90 mb-8">
-                                Join the DreamWeave family and discover why over 50,000 customers
+                                Join the VIP Bed Sheets family and discover why over 50,000 customers
                                 trust us for their best night's sleep.
                             </p>
                             <Link to="/shop">

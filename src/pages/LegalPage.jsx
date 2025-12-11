@@ -67,7 +67,7 @@ export default function LegalPage({ defaultTab = "terms" }) {
                             <section>
                                 <h3 className="text-xl font-semibold mb-3">1. Agreement to Terms</h3>
                                 <p>
-                                    By accessing or using DreamWeave's website and services, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.
+                                    By accessing or using VIP Bed Sheets's website and services, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.
                                 </p>
                             </section>
 
@@ -88,7 +88,7 @@ export default function LegalPage({ defaultTab = "terms" }) {
                             <section>
                                 <h3 className="text-xl font-semibold mb-3">4. Intellectual Property</h3>
                                 <p>
-                                    The service and its original content, features, and functionality are and will remain the exclusive property of DreamWeave and its licensors.
+                                    The service and its original content, features, and functionality are and will remain the exclusive property of VIP Bed Sheets and its licensors.
                                 </p>
                             </section>
 
@@ -116,7 +116,7 @@ export default function LegalPage({ defaultTab = "terms" }) {
                             <section>
                                 <h3 className="text-xl font-semibold mb-3">8. Limitation of Liability</h3>
                                 <p>
-                                    In no event shall DreamWeave, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.
+                                    In no event shall VIP Bed Sheets, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.
                                 </p>
                             </section>
                         </div>
@@ -179,7 +179,7 @@ export default function LegalPage({ defaultTab = "terms" }) {
                             <section>
                                 <h3 className="text-xl font-semibold mb-3">8. Contact Us</h3>
                                 <p>
-                                    If you have any questions about this Privacy Policy, please contact us at support@dreamweave.com.
+                                    If you have any questions about this Privacy Policy, please contact us at support@vipbedsheets.com.
                                 </p>
                             </section>
                         </div>

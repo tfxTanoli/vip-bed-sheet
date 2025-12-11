@@ -51,8 +51,8 @@ export default function ContactPage() {
                                     <p className="text-muted-foreground text-sm mb-4">
                                         Our friendly team is here to help.
                                     </p>
-                                    <a href="mailto:hello@dreamweave.com" className="text-primary font-medium hover:underline">
-                                        hello@dreamweave.com
+                                    <a href="mailto:hello@vipbedsheets.com" className="text-primary font-medium hover:underline">
+                                        hello@vipbedsheets.com
                                     </a>
                                 </Card>
 
@@ -64,8 +64,8 @@ export default function ContactPage() {
                                     <p className="text-muted-foreground text-sm mb-4">
                                         Mon-Fri from 8am to 5pm.
                                     </p>
-                                    <a href="tel:+15550000000" className="text-primary font-medium hover:underline">
-                                        +1 (555) 000-0000
+                                    <a href="tel:03469274752" className="text-primary font-medium hover:underline">
+                                        03469274752
                                     </a>
                                 </Card>
 
@@ -78,8 +78,8 @@ export default function ContactPage() {
                                         Come say hello at our office HQ.
                                     </p>
                                     <p className="text-primary font-medium">
-                                        123 Bedding Lane<br />
-                                        Sleepy Hollow, NY 10591
+                                        Manshera road Muqaddas Tower<br />
+                                        Near Stylo Plaza Mandiyan Abbottabad
                                     </p>
                                 </Card>
 

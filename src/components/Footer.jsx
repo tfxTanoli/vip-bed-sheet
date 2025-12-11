@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Bed, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Bed, Mail, Phone, MapPin } from "lucide-react";
+import { FaFacebook, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 
@@ -17,7 +18,7 @@ export default function Footer() {
                                 <Bed className="w-6 h-6 text-white" />
                             </div>
                             <span className="text-xl font-heading font-bold gradient-text">
-                                DreamWeave
+                                VIP Bed Sheets
                             </span>
                         </Link>
                         <p className="text-muted-foreground text-sm leading-relaxed">
@@ -25,15 +26,30 @@ export default function Footer() {
                             handcrafted sheets made from the world's finest materials.
                         </p>
                         <div className="flex space-x-3">
-                            {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
-                                <a
-                                    key={index}
-                                    href="#"
-                                    className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-                                >
-                                    <Icon className="w-4 h-4" />
-                                </a>
-                            ))}
+                            <a
+                                href="https://www.facebook.com/share/1BWB4qre1w/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                            >
+                                <FaFacebook className="w-4 h-4" />
+                            </a>
+                            <a
+                                href="https://tiktok.com/@vip.bedsheets"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                            >
+                                <FaTiktok className="w-4 h-4" />
+                            </a>
+                            <a
+                                href="https://whatsapp.com/channel/0029VbBWfI9ICVfnwICEHx41"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                            >
+                                <FaWhatsapp className="w-4 h-4" />
+                            </a>
                         </div>
                     </div>
 
@@ -100,15 +116,15 @@ export default function Footer() {
                         <div className="mt-6 space-y-2">
                             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                                 <Phone className="w-4 h-4" />
-                                <span>1-800-DREAM-UP</span>
+                                <span>03469274752</span>
                             </div>
                             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                                 <Mail className="w-4 h-4" />
-                                <span>hello@dreamweave.com</span>
+                                <span>hello@vipbedsheets.com</span>
                             </div>
                             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                                 <MapPin className="w-4 h-4" />
-                                <span>New York, NY</span>
+                                <span>Manshera road Muqaddas Tower Near Stylo Plaza Mandiyan Abbottabad</span>
                             </div>
                         </div>
                     </div>
@@ -118,7 +134,7 @@ export default function Footer() {
                 <div className="mt-12 pt-8 border-t border-border">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <p className="text-sm text-muted-foreground">
-                            © {currentYear} DreamWeave. All rights reserved.
+                            © {currentYear} VIP Bed Sheets. All rights reserved.
                         </p>
                         <div className="flex space-x-6">
                             <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">

@@ -40,7 +40,7 @@ export default function Navbar() {
                             <Bed className="w-6 h-6 text-white" />
                         </div>
                         <span className="text-xl md:text-2xl font-heading font-bold gradient-text">
-                            DreamWeave
+                            VIP Bed Sheets
                         </span>
                     </Link>
 

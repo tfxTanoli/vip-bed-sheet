@@ -61,7 +61,7 @@ export default function ReturnsPage() {
                         </h2>
                         <div className="prose prose-slate dark:prose-invert max-w-none space-y-4 text-muted-foreground">
                             <p>
-                                At DreamWeave, we believe you should be completely satisfied with your bedding. If you aren't 100% happy with your purchase, you can return it for a full refund within 100 days of the delivery date.
+                                At VIP Bed Sheets, we believe you should be completely satisfied with your bedding. If you aren't 100% happy with your purchase, you can return it for a full refund within 100 days of the delivery date.
                             </p>
                             <p>
                                 Returns will be refunded in the original method of payment. You must postmark your items for return within 100 days of delivery receipt to be eligible for a refund.
@@ -89,7 +89,7 @@ export default function ReturnsPage() {
                                 To initiate an exchange:
                             </p>
                             <ol className="list-decimal pl-5 space-y-2">
-                                <li>Contact our support team at <span className="font-medium text-foreground">support@dreamweave.com</span> or via our Contact Page.</li>
+                                <li>Contact our support team at <span className="font-medium text-foreground">support@vipbedsheets.com</span> or via our Contact Page.</li>
                                 <li>Provide your Order ID and detail the items you wish to exchange.</li>
                                 <li>We will send you a prepaid shipping label.</li>
                                 <li>Once we receive your return, we’ll ship out your new items immediately!</li>
