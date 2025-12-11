@@ -7,6 +7,7 @@ import { Badge } from "../components/ui/Badge";
 import ProductCard from "../components/ProductCard";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { formatPrice } from "../lib/utils";
 import { db } from "../../firebase";
 import ReviewSection from "../components/ReviewSection";
@@ -16,6 +17,7 @@ export default function ProductPage() {
     const navigate = useNavigate();
     const { addToCart } = useCart();
     const { isAuthenticated, user } = useAuth();
+    const { toggleFavorite, isFavorite } = useFavorites();
 
     // State
     const [product, setProduct] = useState(null);
@@ -324,8 +326,8 @@ export default function ProductPage() {
                                 <ShoppingCart className="w-5 h-5 mr-2" />
                                 Add to Cart
                             </Button>
-                            <Button variant="outline" size="lg">
-                                <Heart className="w-5 h-5" />
+                            <Button variant="outline" size="lg" onClick={() => toggleFavorite(product.id)}>
+                                <Heart className={`w-5 h-5 ${isFavorite(product.id) ? "fill-current text-red-500" : ""}`} />
                             </Button>
                         </div>
 

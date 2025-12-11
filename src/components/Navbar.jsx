@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Sun, Moon, Menu, X, Bed, LogOut, User } from "lucide-react";
+import { ShoppingCart, Sun, Moon, Menu, X, Bed, LogOut, User, Heart } from "lucide-react";
 import { Button } from "./ui/Button";
 import { useTheme } from "../context/ThemeContext";
 import { useCart } from "../context/CartContext";
@@ -60,6 +60,18 @@ export default function Navbar() {
 
                     {/* Actions */}
                     <div className="flex items-center space-x-2 md:space-x-4">
+                        {/* Favorites Icon */}
+                        <div className="relative">
+                            <Button variant="ghost" size="icon" onClick={() => {
+                                if (isAuthenticated) {
+                                    navigate("/favorites");
+                                } else {
+                                    navigate("/login");
+                                }
+                            }}>
+                                <Heart className="w-5 h-5" />
+                            </Button>
+                        </div>
                         <Button
                             variant="ghost"
                             size="icon"

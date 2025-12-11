@@ -39,7 +39,7 @@ export default function CheckoutPage() {
     };
 
     const subtotal = cartTotal;
-    const shipping = subtotal > 100 ? 0 : 9.99;
+    const shipping = subtotal > 10000 ? 0 : 400;
     const tax = subtotal * 0.08;
     const total = subtotal + shipping + tax;
 
@@ -302,68 +302,7 @@ export default function CheckoutPage() {
                                         </p>
                                     </div>
 
-                                    {/* Online Payment (Commented out for future use) */}
-                                    {/*
-                                    <div className="grid gap-6">
-                                        <div>
-                                            <Label htmlFor="cardNumber">Card Number</Label>
-                                            <Input
-                                                id="cardNumber"
-                                                name="cardNumber"
-                                                placeholder="4242 4242 4242 4242"
-                                                value={formData.cardNumber}
-                                                onChange={handleInputChange}
-                                                required
-                                                className="mt-1.5"
-                                            />
-                                        </div>
 
-                                        <div>
-                                            <Label htmlFor="cardName">Name on Card</Label>
-                                            <Input
-                                                id="cardName"
-                                                name="cardName"
-                                                placeholder="John Doe"
-                                                value={formData.cardName}
-                                                onChange={handleInputChange}
-                                                required
-                                                className="mt-1.5"
-                                            />
-                                        </div>
-
-                                        <div className="grid sm:grid-cols-2 gap-4">
-                                            <div>
-                                                <Label htmlFor="expiry">Expiry Date</Label>
-                                                <Input
-                                                    id="expiry"
-                                                    name="expiry"
-                                                    placeholder="MM/YY"
-                                                    value={formData.expiry}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                    className="mt-1.5"
-                                                />
-                                            </div>
-                                            <div>
-                                                <Label htmlFor="cvv">CVV</Label>
-                                                <Input
-                                                    id="cvv"
-                                                    name="cvv"
-                                                    placeholder="123"
-                                                    value={formData.cvv}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                    className="mt-1.5"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-2 mt-6 text-sm text-muted-foreground">
-                                        <Lock className="w-4 h-4" />
-                                        <span>Your payment information is encrypted and secure</span>
-                                    </div>
-                                    */}
 
                                     <div className="flex gap-4 mt-8">
                                         <Button

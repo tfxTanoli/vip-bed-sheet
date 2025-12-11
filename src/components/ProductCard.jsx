@@ -1,16 +1,26 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star, Eye } from "lucide-react";
+import { ShoppingCart, Star, Eye, Heart } from "lucide-react";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { Badge } from "./ui/Badge";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { formatPrice } from "../lib/utils";
 
 export default function ProductCard({ product }) {
     const { addToCart } = useCart();
     const { isAuthenticated } = useAuth();
+    const { toggleFavorite, isFavorite } = useFavorites();
     const navigate = useNavigate();
+
+    const isFavorited = isFavorite(product.id);
+
+    const handleToggleFavorite = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFavorite(product.id);
+    };
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -48,13 +58,16 @@ export default function ProductCard({ product }) {
                         )}
                     </div>
 
-                    {product.originalPrice && (
-                        <Badge variant="destructive" className="absolute top-4 right-4 shadow-sm animate-pulse">
-                            Sale
-                        </Badge>
-                    )}
+
 
                     {/* Quick Actions */}
+                    <button
+                        onClick={handleToggleFavorite}
+                        className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 hover:text-red-500 transition-colors shadow-sm z-10"
+                    >
+                        <Heart className={`w-5 h-5 ${isFavorited ? "fill-current text-red-500" : ""}`} />
+                    </button>
+
                     <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-3 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75">
                         <Button
                             size="sm"

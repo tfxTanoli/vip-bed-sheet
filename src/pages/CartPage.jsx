@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useCart } from "../context/CartContext";
@@ -34,7 +34,7 @@ export default function CartPage() {
     }
 
     const subtotal = cartTotal;
-    const shipping = subtotal > 100 ? 0 : 9.99;
+    const shipping = subtotal > 10000 ? 0 : 400;
     const tax = subtotal * 0.08;
     const total = subtotal + shipping + tax;
 
@@ -145,7 +145,7 @@ export default function CartPage() {
                                 </div>
                                 {shipping > 0 && (
                                     <p className="text-sm text-primary">
-                                        Add {formatPrice(100 - subtotal)} more for free shipping!
+                                        Add {formatPrice(10000 - subtotal)} more for free shipping!
                                     </p>
                                 )}
                                 <div className="border-t pt-4">
@@ -163,22 +163,15 @@ export default function CartPage() {
                                 </Button>
                             </Link>
 
-                            <p className="text-center text-sm text-muted-foreground mt-4">
-                                Secure checkout powered by Stripe
-                            </p>
-
                             <div className="mt-6 p-4 bg-secondary/50 rounded-lg">
-                                <p className="text-sm font-medium mb-2">Accepted Payment Methods</p>
-                                <div className="flex gap-2">
-                                    {["Visa", "Mastercard", "Amex", "PayPal"].map((method) => (
-                                        <div
-                                            key={method}
-                                            className="px-2 py-1 bg-background rounded text-xs font-medium"
-                                        >
-                                            {method}
-                                        </div>
-                                    ))}
+                                <p className="text-sm font-medium mb-2">Payment Method</p>
+                                <div className="flex items-center gap-2">
+                                    <Truck className="w-4 h-4 text-primary" />
+                                    <span className="text-sm font-medium">Cash on Delivery</span>
                                 </div>
+                                <p className="text-xs text-muted-foreground mt-2">
+                                    Pay securely with cash upon receipt.
+                                </p>
                             </div>
                         </Card>
                     </div>
