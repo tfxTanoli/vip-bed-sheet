@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer, useEffect, useState } from "reac
 import { useAuth } from "./AuthContext";
 import { db } from "../../firebase";
 import { ref, set, get } from "firebase/database";
+import { products } from "../data/products";
 
 const CartContext = createContext();
 
@@ -56,12 +57,31 @@ export function CartProvider({ children }) {
     const { user } = useAuth();
     const [isCartLoaded, setIsCartLoaded] = useState(false);
 
+    // Helper to refresh items with latest product data
+    const refreshCartItems = (items) => {
+        if (!items) return [];
+        return items.map(item => {
+            const freshProduct = products.find(p => p.id === item.id);
+            if (freshProduct) {
+                return {
+                    ...item,
+                    image: freshProduct.image,
+                    price: freshProduct.price,
+                    name: freshProduct.name
+                };
+            }
+            return item;
+        });
+    };
+
     // Load local cart initially (for guests or before auth checks)
     useEffect(() => {
         const savedCart = localStorage.getItem("bedsheet-cart");
         if (savedCart && !user) {
             try {
-                dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
+                const parsedCart = JSON.parse(savedCart);
+                const refreshedCart = refreshCartItems(parsedCart);
+                dispatch({ type: "LOAD_CART", payload: refreshedCart });
                 setIsCartLoaded(true); // Treat local load as "loaded" for guests
             } catch (e) {
                 console.error("Failed to parse local cart", e);
@@ -88,17 +108,20 @@ export function CartProvider({ children }) {
 
                     if (localItems.length > 0 && (!dbCart || dbCart.length === 0)) {
                         // Push Local to DB
-                        set(cartRef, localItems);
-                        dispatch({ type: "LOAD_CART", payload: localItems });
+                        const refreshedLocal = refreshCartItems(localItems);
+                        set(cartRef, refreshedLocal);
+                        dispatch({ type: "LOAD_CART", payload: refreshedLocal });
                     } else {
                         // Load DB
-                        dispatch({ type: "LOAD_CART", payload: dbCart });
+                        const refreshedDb = refreshCartItems(dbCart);
+                        dispatch({ type: "LOAD_CART", payload: refreshedDb });
                     }
                 } else {
                     // DB empty. If we have local items, push them!
                     if (localItems.length > 0) {
-                        set(cartRef, localItems);
-                        dispatch({ type: "LOAD_CART", payload: localItems });
+                        const refreshedLocal = refreshCartItems(localItems);
+                        set(cartRef, refreshedLocal);
+                        dispatch({ type: "LOAD_CART", payload: refreshedLocal });
                     } else {
                         dispatch({ type: "LOAD_CART", payload: [] });
                     }
@@ -115,7 +138,9 @@ export function CartProvider({ children }) {
         } else {
             // User Logged Out: Load from local storage (Guest Cart)
             const savedCart = localStorage.getItem("bedsheet-cart");
-            dispatch({ type: "LOAD_CART", payload: savedCart ? JSON.parse(savedCart) : [] });
+            const parsedCart = savedCart ? JSON.parse(savedCart) : [];
+            const refreshedCart = refreshCartItems(parsedCart);
+            dispatch({ type: "LOAD_CART", payload: refreshedCart });
             setIsCartLoaded(true);
         }
     }, [user]);
