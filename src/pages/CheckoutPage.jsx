@@ -39,8 +39,8 @@ export default function CheckoutPage() {
     };
 
     const subtotal = cartTotal;
-    const shipping = subtotal > 10000 ? 0 : 400;
-    const tax = subtotal * 0.08;
+    const shipping = 0;
+    const tax = 0;
     const total = subtotal + shipping + tax;
 
     const handleSubmit = async (e) => {
@@ -373,7 +373,7 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Shipping</span>
-                                    <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+                                    <span>Free</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Tax</span>

@@ -20,12 +20,36 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            setLoading(false);
+        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+            if (authUser) {
+                // Auto-promote specific user to admin (Configuration)
+                if (authUser.email === 'farhanmughal3870@gmail.com') {
+                    try {
+                        await db.ref(`users/${authUser.uid}`).update({ role: 'admin' });
+                    } catch (e) {
+                        console.error("Error auto-promoting admin:", e);
+                    }
+                }
+
+                try {
+                    const userRef = db.ref(`users/${authUser.uid}`);
+                    userRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        setUser({ ...authUser, ...data });
+                        setLoading(false);
+                    });
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    setUser(authUser);
+                    setLoading(false);
+                }
+            } else {
+                setUser(null);
+                setLoading(false);
+            }
         });
 
-        return unsubscribe;
+        return () => unsubscribe();
     }, []);
 
     const signup = async (email, password, name) => {

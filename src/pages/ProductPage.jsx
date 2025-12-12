@@ -33,29 +33,61 @@ export default function ProductPage() {
     const [hasReviewed, setHasReviewed] = useState(false);
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
+    // Image Gallery State
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+    // Normalize images to array safely (handling Firebase object/array/null)
+    const rawImages = product?.images
+        ? (Array.isArray(product.images) ? product.images : Object.values(product.images))
+        : [];
+    const images = rawImages.length > 0 ? rawImages : (product?.image ? [product.image] : []);
+
+    // 1. Sync Color -> Image
+    // When user selects a color, jump to that image index if it exists
+    useEffect(() => {
+        if (product?.colors && product.colors.includes(selectedColor)) {
+            const colorIndex = product.colors.indexOf(selectedColor);
+            if (images[colorIndex]) {
+                setActiveImageIndex(colorIndex);
+            }
+        }
+    }, [selectedColor, product, images]);
+
+    // 2. Sync Image -> Color (Optional, but good for "linking")
+    // When user slides image, if that index corresponds to a color, select it
+    // note: We use a check to avoid loops or overriding explicit user choice immediately if the user is just browsing images
+    // But since the user specifically asked "color should be link with the picture", let's force it.
+
+    const handleImageChange = (newIndex) => {
+        setActiveImageIndex(newIndex);
+        // Try to find color for this index
+        if (product?.colors && product.colors[newIndex]) {
+            setSelectedColor(product.colors[newIndex]);
+        }
+    };
+
     // Fetch Product Data
     useEffect(() => {
         setLoading(true);
-        const productsRef = db.ref('products');
+        const productRef = db.ref(`products/${id}`);
 
-        // Find product by ID
-        productsRef.orderByChild('id').equalTo(parseInt(id)).once('value', (snapshot) => {
+        productRef.once('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                const key = Object.keys(data)[0];
-                const productData = data[key];
-
-                setProduct({ ...productData, firebaseKey: key });
-                setSelectedColor(productData.colors?.[0] || "");
+                setProduct({ ...data, id: id, firebaseKey: id });
+                setSelectedColor(data.colors?.[0] || "");
 
                 // Fetch Related Products (simple filter)
-                productsRef.once('value', (allSnap) => {
+                // Note: For production, this should be a query, but for now fetching all is ok as we have context
+                // Or better, let's just query by category if we can, or just fetch all and filter client side for correct "related" logic
+                const allProductsRef = db.ref('products');
+                allProductsRef.limitToLast(10).once('value', (allSnap) => {
                     const allData = allSnap.val();
                     if (allData) {
-                        const allProducts = Array.isArray(allData) ? allData : Object.values(allData);
+                        const allProducts = Object.keys(allData).map(key => ({ id: key, ...allData[key] }));
                         setRelatedProducts(
                             allProducts
-                                .filter(p => p.category === productData.category && p.id !== productData.id)
+                                .filter(p => p.category === data.category && p.id !== id)
                                 .slice(0, 4)
                         );
                     }
@@ -74,7 +106,6 @@ export default function ProductPage() {
                 const reviewsList = Object.values(data).sort((a, b) => new Date(b.date) - new Date(a.date));
                 setReviews(reviewsList);
 
-                // Check if user has already reviewed
                 if (user) {
                     const userReview = reviewsList.find(r => r.userId === user.uid);
                     setHasReviewed(!!userReview);
@@ -86,6 +117,7 @@ export default function ProductPage() {
         });
 
         return () => {
+            productRef.off();
             reviewsRef.off();
         };
     }, [id, user]);
@@ -122,7 +154,7 @@ export default function ProductPage() {
             navigate("/login");
             return;
         }
-        addToCart(product, quantity, selectedSize, selectedColor);
+        addToCart(product, quantity, selectedSize, selectedColor, images[activeImageIndex]);
     };
 
     const handleReviewSubmit = async ({ rating, comment }) => {
@@ -181,7 +213,10 @@ export default function ProductPage() {
                 </Card>
             </div>
         );
+
     }
+
+
 
     return (
         <div className="min-h-screen py-8 md:py-12">
@@ -196,22 +231,69 @@ export default function ProductPage() {
                 </button>
 
                 <div className="grid lg:grid-cols-2 gap-12 mb-16">
-                    {/* Product Image */}
-                    <div className="relative">
-                        <div className="aspect-square rounded-2xl overflow-hidden bg-muted">
+                    {/* Product Image Gallery */}
+
+
+
+
+                    {/* Product Image Gallery */}
+                    <div className="space-y-4">
+                        <div className="aspect-square rounded-2xl overflow-hidden bg-muted relative group">
                             <img
-                                src={product.image}
+                                src={images[activeImageIndex] || product.image}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
+                            {/* Navigation Arrows */}
+                            {images.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const newIndex = activeImageIndex === 0 ? images.length - 1 : activeImageIndex - 1;
+                                            handleImageChange(newIndex);
+                                        }}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <ChevronLeft className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const newIndex = (activeImageIndex + 1) % images.length;
+                                            handleImageChange(newIndex);
+                                        }}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <ChevronLeft className="w-5 h-5 rotate-180" />
+                                    </button>
+                                </>
+                            )}
+
+                            {product.badge && (
+                                <Badge className="absolute top-4 left-4">{product.badge}</Badge>
+                            )}
+                            {product.originalPrice && (
+                                <Badge variant="destructive" className="absolute top-4 right-4">
+                                    {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+                                </Badge>
+                            )}
                         </div>
-                        {product.badge && (
-                            <Badge className="absolute top-4 left-4">{product.badge}</Badge>
-                        )}
-                        {product.originalPrice && (
-                            <Badge variant="destructive" className="absolute top-4 right-4">
-                                {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                            </Badge>
+
+                        {/* Thumbnails */}
+                        {images.length > 1 && (
+                            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                                {images.map((img, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleImageChange(idx)}
+                                        className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImageIndex === idx ? "border-primary ring-2 ring-primary/20" : "border-transparent hover:border-gray-300"
+                                            }`}
+                                    >
+                                        <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
                         )}
                     </div>
 

@@ -5,13 +5,14 @@ import { Card } from "../components/ui/Card";
 import ProductCard from "../components/ProductCard";
 import { useFavorites } from "../context/FavoritesContext";
 import { useAuth } from "../context/AuthContext";
-import { products } from "../data/products";
+import { useProducts } from "../context/ProductsContext";
 
 export default function FavoritesPage() {
     const { favorites, loading: favoritesLoading } = useFavorites();
     const { user, loading: authLoading } = useAuth();
+    const { products, loading: productsLoading } = useProducts();
 
-    if (authLoading || favoritesLoading) {
+    if (authLoading || favoritesLoading || productsLoading) {
         return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
     }
 

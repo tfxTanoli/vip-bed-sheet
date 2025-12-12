@@ -34,8 +34,8 @@ export default function CartPage() {
     }
 
     const subtotal = cartTotal;
-    const shipping = subtotal > 10000 ? 0 : 400;
-    const tax = subtotal * 0.08;
+    const shipping = 0;
+    const tax = 0;
     const total = subtotal + shipping + tax;
 
     return (
@@ -73,7 +73,7 @@ export default function CartPage() {
                                                     </h3>
                                                 </Link>
                                                 <p className="text-sm text-muted-foreground mt-1">
-                                                    Size: {item.size}
+                                                    Size: {item.size} | Color: {item.color}
                                                 </p>
                                             </div>
                                             <Button
@@ -137,17 +137,12 @@ export default function CartPage() {
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Shipping</span>
-                                    <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+                                    <span>Free</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Tax (8%)</span>
+                                    <span className="text-muted-foreground">Tax</span>
                                     <span>{formatPrice(tax)}</span>
                                 </div>
-                                {shipping > 0 && (
-                                    <p className="text-sm text-primary">
-                                        Add {formatPrice(10000 - subtotal)} more for free shipping!
-                                    </p>
-                                )}
                                 <div className="border-t pt-4">
                                     <div className="flex justify-between font-bold text-lg">
                                         <span>Total</span>

@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star, Eye, Heart } from "lucide-react";
+import { ShoppingCart, Star, Eye, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { Badge } from "./ui/Badge";
@@ -35,16 +36,55 @@ export default function ProductCard({ product }) {
         addToCart(product, 1, "Queen");
     };
 
+    // State for image slider
+    const [activeImgIndex, setActiveImgIndex] = useState(0);
+
+    // Normalize images safely
+    const rawImages = product.images
+        ? (Array.isArray(product.images) ? product.images : Object.values(product.images))
+        : [];
+    const images = rawImages.length > 0 ? rawImages : (product.image ? [product.image] : []);
+
+    const handleNextImage = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActiveImgIndex((prev) => (prev + 1) % images.length);
+    };
+
+    const handlePrevImage = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActiveImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    };
+
     return (
         <Link to={`/product/${product.id}`}>
             <Card className="group relative overflow-hidden hover-lift product-card cursor-pointer h-full border-none shadow-md hover:shadow-xl bg-card/50 backdrop-blur-sm">
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-[4/3] overflow-hidden group/image">
                     <img
-                        src={product.image}
+                        src={images[activeImgIndex] || product.image}
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
+
+                    {/* Slider Arrows (Only show if multiple images) */}
+                    {images.length > 1 && (
+                        <>
+                            <button
+                                onClick={handlePrevImage}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white/70 hover:bg-white text-black opacity-0 group-hover/image:opacity-100 transition-opacity z-20 shadow-sm"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={handleNextImage}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white/70 hover:bg-white text-black opacity-0 group-hover/image:opacity-100 transition-opacity z-20 shadow-sm"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </>
+                    )}
 
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -125,7 +165,7 @@ export default function ProductCard({ product }) {
 
                         {/* Colors Preview */}
                         <div className="flex items-center -space-x-1.5">
-                            {product.colors.slice(0, 3).map((color, index) => (
+                            {product.colors && product.colors.slice(0, 3).map((color, index) => (
                                 <div
                                     key={index}
                                     className="w-5 h-5 rounded-full border-2 border-background shadow-sm ring-1 ring-black/5"
@@ -145,7 +185,7 @@ export default function ProductCard({ product }) {
                                     title={color}
                                 />
                             ))}
-                            {product.colors.length > 3 && (
+                            {product.colors && product.colors.length > 3 && (
                                 <div className="w-5 h-5 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[8px] font-medium text-muted-foreground">
                                     +{product.colors.length - 3}
                                 </div>

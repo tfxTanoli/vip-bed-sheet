@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, Mail, Lock, Facebook } from "lucide-react";
 import { Button } from "../components/ui/Button";
+import { db } from "../../firebase";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
 import { GoogleIcon } from "../components/icons/GoogleIcon";
@@ -70,8 +71,18 @@ export default function LoginPage() {
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true);
             try {
-                await login(formData.email, formData.password);
-                navigate("/");
+                const credential = await login(formData.email, formData.password);
+                const uid = credential.user.uid;
+
+                // Fetch user role directly to decide navigation immediately
+                const snapshot = await db.ref(`users/${uid}`).once('value');
+                const userData = snapshot.val();
+
+                if (userData && userData.role === 'admin') {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/");
+                }
             } catch (error) {
                 console.error("Login Error:", error);
                 setErrors(prev => ({

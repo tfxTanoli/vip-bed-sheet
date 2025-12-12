@@ -4,18 +4,19 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 import ProductCard from "../components/ProductCard";
-import { products } from "../data/products";
+import { useProducts } from "../context/ProductsContext";
 
 const categories = ["All", "Premium", "Eco-Friendly", "Classic", "Value", "Casual"];
 const priceRanges = [
     { label: "All Prices", min: 0, max: Infinity },
-    { label: "Under $100", min: 0, max: 100 },
-    { label: "$100 - $150", min: 100, max: 150 },
-    { label: "$150 - $200", min: 150, max: 200 },
-    { label: "Over $200", min: 200, max: Infinity },
+    { label: "Under Rs 3,000", min: 0, max: 3000 },
+    { label: "Rs 3,000 - Rs 6,000", min: 3000, max: 6000 },
+    { label: "Rs 6,000 - Rs 9,000", min: 6000, max: 9000 },
+    { label: "Over Rs 9,000", min: 9000, max: Infinity },
 ];
 
 export default function ShopPage() {
+    const { products, loading } = useProducts();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedPriceRange, setSelectedPriceRange] = useState(priceRanges[0]);
@@ -23,7 +24,7 @@ export default function ShopPage() {
 
     const filteredProducts = products.filter((product) => {
         const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchQuery.toLowerCase());
+            product.description?.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
         const matchesPrice = product.price >= selectedPriceRange.min && product.price <= selectedPriceRange.max;
         return matchesSearch && matchesCategory && matchesPrice;
@@ -93,8 +94,8 @@ export default function ShopPage() {
                                         key={category}
                                         onClick={() => setSelectedCategory(category)}
                                         className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${selectedCategory === category
-                                                ? "bg-primary text-primary-foreground"
-                                                : "hover:bg-muted"
+                                            ? "bg-primary text-primary-foreground"
+                                            : "hover:bg-muted"
                                             }`}
                                     >
                                         {category}
@@ -112,8 +113,8 @@ export default function ShopPage() {
                                         key={range.label}
                                         onClick={() => setSelectedPriceRange(range)}
                                         className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${selectedPriceRange === range
-                                                ? "bg-primary text-primary-foreground"
-                                                : "hover:bg-muted"
+                                            ? "bg-primary text-primary-foreground"
+                                            : "hover:bg-muted"
                                             }`}
                                     >
                                         {range.label}
@@ -143,8 +144,8 @@ export default function ShopPage() {
                                                 key={category}
                                                 onClick={() => setSelectedCategory(category)}
                                                 className={`px-4 py-2 rounded-full text-sm transition-colors ${selectedCategory === category
-                                                        ? "bg-primary text-primary-foreground"
-                                                        : "bg-muted hover:bg-muted/80"
+                                                    ? "bg-primary text-primary-foreground"
+                                                    : "bg-muted hover:bg-muted/80"
                                                     }`}
                                             >
                                                 {category}
@@ -162,8 +163,8 @@ export default function ShopPage() {
                                                 key={range.label}
                                                 onClick={() => setSelectedPriceRange(range)}
                                                 className={`px-4 py-2 rounded-full text-sm transition-colors ${selectedPriceRange === range
-                                                        ? "bg-primary text-primary-foreground"
-                                                        : "bg-muted hover:bg-muted/80"
+                                                    ? "bg-primary text-primary-foreground"
+                                                    : "bg-muted hover:bg-muted/80"
                                                     }`}
                                             >
                                                 {range.label}
@@ -192,7 +193,11 @@ export default function ShopPage() {
                             </p>
                         </div>
 
-                        {filteredProducts.length > 0 ? (
+                        {loading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                            </div>
+                        ) : filteredProducts.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {filteredProducts.map((product) => (
                                     <ProductCard key={product.id} product={product} />
