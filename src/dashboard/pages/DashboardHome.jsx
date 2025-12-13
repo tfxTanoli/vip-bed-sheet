@@ -1,14 +1,33 @@
-import { DollarSign, ShoppingBag, Users, TrendingUp, Package } from "lucide-react";
+import { DollarSign, ShoppingBag, Users, TrendingUp, Package, Eye } from "lucide-react";
 import { Card } from "../../components/ui/Card";
-
-const stats = [
-    { label: "Total Revenue", value: "Rs 1,24,500", change: "+12.5%", icon: DollarSign, color: "text-green-600 bg-green-100" },
-    { label: "Total Orders", value: "156", change: "+8.2%", icon: ShoppingBag, color: "text-blue-600 bg-blue-100" },
-    { label: "Active Customers", value: "89", change: "+2.4%", icon: Users, color: "text-purple-600 bg-purple-100" },
-    { label: "Products Sold", value: "432", change: "+5.1%", icon: Package, color: "text-orange-600 bg-orange-100" },
-];
+import { useOrders } from "../../context/OrdersContext";
+import { formatPrice } from "../../lib/utils";
+import { Button } from "../../components/ui/Button";
+import { Link } from "react-router-dom";
 
 export default function DashboardHome() {
+    const { orders, loading } = useOrders();
+
+    // Calculate Stats
+    const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+    const totalOrders = orders.length;
+
+    // Simplistic active customers (unique emails)
+    const uniqueCustomers = new Set(orders.map(o => o.shippingDetails?.email).filter(Boolean)).size;
+
+    const productsSold = orders.reduce((sum, order) => {
+        return sum + (order.items?.reduce((is, item) => is + item.quantity, 0) || 0);
+    }, 0);
+
+    const stats = [
+        { label: "Total Revenue", value: formatPrice(totalRevenue), change: "+0%", icon: DollarSign, color: "text-green-600 bg-green-100" },
+        { label: "Total Orders", value: totalOrders.toString(), change: "+0%", icon: ShoppingBag, color: "text-blue-600 bg-blue-100" },
+        { label: "Active Customers", value: uniqueCustomers.toString(), change: "+0%", icon: Users, color: "text-purple-600 bg-purple-100" },
+        { label: "Products Sold", value: productsSold.toString(), change: "+0%", icon: Package, color: "text-orange-600 bg-orange-100" },
+    ];
+
+    const recentOrders = orders.slice(0, 5);
+
     return (
         <div className="space-y-6">
             <div>
@@ -35,11 +54,11 @@ export default function DashboardHome() {
                 ))}
             </div>
 
-            {/* Recent Orders Overview (Mock) */}
+            {/* Recent Orders Overview */}
             <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-lg font-bold font-heading">Recent Orders</h2>
-                    <button className="text-sm text-primary hover:underline">View All</button>
+                    <Link to="/dashboard/orders" className="text-sm text-primary hover:underline">View All</Link>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
@@ -53,22 +72,30 @@ export default function DashboardHome() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <tr key={i} className="hover:bg-muted/30 transition-colors">
-                                    <td className="px-4 py-3 font-medium">#ORD-2024-{1000 + i}</td>
-                                    <td className="px-4 py-3">John Doe</td>
-                                    <td className="px-4 py-3">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${i === 1 ? "bg-yellow-100 text-yellow-700" :
-                                            i === 2 ? "bg-green-100 text-green-700" :
-                                                "bg-blue-100 text-blue-700"
-                                            }`}>
-                                            {i === 1 ? "Pending" : i === 2 ? "Delivered" : "Shipped"}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3">Rs {2500 * i}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">Dec {10 - i}, 2024</td>
-                                </tr>
-                            ))}
+                            {loading ? (
+                                <tr><td colSpan="5" className="px-4 py-8 text-center text-muted-foreground">Loading recent orders...</td></tr>
+                            ) : recentOrders.length === 0 ? (
+                                <tr><td colSpan="5" className="px-4 py-8 text-center text-muted-foreground">No orders yet.</td></tr>
+                            ) : (
+                                recentOrders.map((order) => (
+                                    <tr key={order.id} className="hover:bg-muted/30 transition-colors">
+                                        <td className="px-4 py-3 font-medium">{order.orderId}</td>
+                                        <td className="px-4 py-3">{order.shippingDetails?.name || order.customerName || "Guest"}</td>
+                                        <td className="px-4 py-3">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${order.status === "Delivered" ? "bg-green-100 text-green-700" :
+                                                    order.status === "Pending" ? "bg-yellow-100 text-yellow-700" :
+                                                        "bg-blue-100 text-blue-700"
+                                                }`}>
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">{formatPrice(order.amount)}</td>
+                                        <td className="px-4 py-3 text-muted-foreground">
+                                            {new Date(order.orderDate).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

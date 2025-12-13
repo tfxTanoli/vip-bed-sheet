@@ -186,16 +186,24 @@ export default function Navbar() {
                                     {link.name}
                                 </Link>
                             ))}
+                            {isAuthenticated && user?.role === 'admin' && (
+                                <Link
+                                    to="/dashboard"
+                                    className="text-foreground/80 hover:text-primary font-medium transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-accent"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Dashboard
+                                </Link>
+                            )}
                             {isAuthenticated ? (
-                                <div className="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-accent">
-                                    <span className="text-foreground/80 font-medium">Hi, {user?.displayName?.split(" ")[0] || "User"}</span>
-                                    <div className="flex gap-2">
-                                        <Link to="/profile">
-                                            <Button variant="ghost" size="sm" onClick={() => setIsMenuOpen(false)}>
+                                <div className="flex items-center justify-end px-4 py-2 gap-2">
+                                    <div className="flex gap-2 w-full justify-between">
+                                        <Link to="/profile" className="flex-1">
+                                            <Button variant="outline" size="sm" className="w-full" onClick={() => setIsMenuOpen(false)}>
                                                 Profile
                                             </Button>
                                         </Link>
-                                        <Button variant="ghost" size="sm" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>
+                                        <Button variant="outline" size="sm" className="flex-1" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>
                                             Logout
                                         </Button>
                                     </div>

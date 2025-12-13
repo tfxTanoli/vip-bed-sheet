@@ -77,7 +77,11 @@ export default function CheckoutPage() {
                     orderId: `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
                 };
 
-                await db.ref(`orders/${user.uid}`).push(orderData);
+                const updates = {};
+                updates[`/orders/${user.uid}/${orderData.orderId}`] = orderData;
+                updates[`/all_orders/${orderData.orderId}`] = { ...orderData, userId: user.uid, customerName: orderData.shippingDetails.name };
+
+                await db.ref().update(updates);
             }
 
             setIsProcessing(false);

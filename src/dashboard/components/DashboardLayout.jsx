@@ -16,7 +16,7 @@ import { Button } from "../../components/ui/Button";
 import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardLayout() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const location = useLocation();
     const { user, logout } = useAuth();
 
@@ -30,6 +30,14 @@ export default function DashboardLayout() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -58,6 +66,7 @@ export default function DashboardLayout() {
                                         ? "bg-primary text-primary-foreground"
                                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         }`}
+                                    onClick={() => setIsSidebarOpen(false)}
                                 >
                                     <item.icon className={`w-5 h-5 mr-3 ${isActive ? "text-primary-foreground" : "text-gray-500"}`} />
                                     {item.name}
@@ -69,6 +78,7 @@ export default function DashboardLayout() {
                             <Link
                                 to="/shop"
                                 className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                onClick={() => setIsSidebarOpen(false)}
                             >
                                 <ArrowLeft className="w-5 h-5 mr-3 text-gray-500" />
                                 Back to Shop

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus, Search, Edit, Trash2, Filter, X, Upload } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Filter, X, Upload, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Card } from "../../components/ui/Card";
@@ -11,6 +12,7 @@ export default function ProductsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [viewingProduct, setViewingProduct] = useState(null); // State for view modal
     const [formData, setFormData] = useState({
         name: "",
         price: "",
@@ -155,12 +157,22 @@ export default function ProductsPage() {
                                         <td className="px-4 py-3 text-muted-foreground">{product.category}</td>
                                         <td className="px-4 py-3 font-medium">{formatPrice(product.price)}</td>
                                         <td className="px-4 py-3">
-                                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                                In Stock
+                                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 whitespace-nowrap">
+                                                <span className="md:hidden">Stock</span>
+                                                <span className="hidden md:inline">In Stock</span>
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <div className="flex items-center justify-end gap-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-blue-500"
+                                                    title="View Product"
+                                                    onClick={() => setViewingProduct(product)}
+                                                >
+                                                    <Eye className="w-4 h-4" />
+                                                </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -281,6 +293,77 @@ export default function ProductsPage() {
                                 </Button>
                             </div>
                         </form>
+                    </Card>
+                </div>
+            )}
+            {/* Product View Modal */}
+            {viewingProduct && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in p-4 overflow-y-auto">
+                    <Card className="w-full max-w-2xl p-6 my-8 max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-start mb-6">
+                            <h2 className="text-xl font-bold font-heading">Product Details</h2>
+                            <Button variant="ghost" size="icon" onClick={() => setViewingProduct(null)}>
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="aspect-[4/3] rounded-lg overflow-hidden bg-muted">
+                                    <img
+                                        src={viewingProduct.image}
+                                        alt={viewingProduct.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                {viewingProduct.images && viewingProduct.images.length > 1 && (
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {viewingProduct.images.map((img, idx) => (
+                                            <div key={idx} className="aspect-square rounded-md overflow-hidden bg-muted">
+                                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <h3 className="text-lg font-bold">{viewingProduct.name}</h3>
+                                    <p className="text-sm text-primary font-medium">{viewingProduct.category}</p>
+                                </div>
+
+                                <div className="text-2xl font-bold">
+                                    {formatPrice(viewingProduct.price)}
+                                </div>
+
+                                <div>
+                                    <h4 className="font-medium mb-1 text-sm">Description</h4>
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                        {viewingProduct.description || "No description provided."}
+                                    </p>
+                                </div>
+
+                                <div className="pt-4 border-t border-border">
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span className="text-muted-foreground block">Rating</span>
+                                            <span className="font-medium">{viewingProduct.rating || 0} / 5</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-muted-foreground block">Reviews</span>
+                                            <span className="font-medium">{viewingProduct.reviews || 0}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-border">
+                            <Button variant="outline" onClick={() => setViewingProduct(null)}>
+                                Close
+                            </Button>
+                        </div>
                     </Card>
                 </div>
             )}
