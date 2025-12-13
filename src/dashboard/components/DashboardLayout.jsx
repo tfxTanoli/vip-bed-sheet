@@ -9,13 +9,16 @@ import {
     Menu,
     X,
     LogOut,
-    Bell
+    Bell,
+    ArrowLeft
 } from "lucide-react";
 import { Button } from "../../components/ui/Button";
+import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardLayout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const location = useLocation();
+    const { user, logout } = useAuth();
 
     const navigation = [
         { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -52,8 +55,8 @@ export default function DashboardLayout() {
                                     key={item.name}
                                     to={item.href}
                                     className={`flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
-                                            ? "bg-primary text-primary-foreground"
-                                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         }`}
                                 >
                                     <item.icon className={`w-5 h-5 mr-3 ${isActive ? "text-primary-foreground" : "text-gray-500"}`} />
@@ -61,6 +64,16 @@ export default function DashboardLayout() {
                                 </Link>
                             );
                         })}
+
+                        <div className="pt-4 mt-6 border-t border-gray-200 dark:border-gray-700">
+                            <Link
+                                to="/shop"
+                                className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                <ArrowLeft className="w-5 h-5 mr-3 text-gray-500" />
+                                Back to Shop
+                            </Link>
+                        </div>
                     </nav>
 
                     {/* User Profile / Logout */}
@@ -70,11 +83,11 @@ export default function DashboardLayout() {
                                 <span className="text-sm font-medium">AD</span>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">Admin User</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">admin@vipbedsheets.com</p>
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{user?.displayName || "Admin User"}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
                             </div>
                         </div>
-                        <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/10">
+                        <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/10" onClick={logout}>
                             <LogOut className="w-4 h-4 mr-2" />
                             Sign Out
                         </Button>

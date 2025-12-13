@@ -163,34 +163,7 @@ export default function ProductCard({ product }) {
                             )}
                         </div>
 
-                        {/* Colors Preview */}
-                        <div className="flex items-center -space-x-1.5">
-                            {product.colors && product.colors.slice(0, 3).map((color, index) => (
-                                <div
-                                    key={index}
-                                    className="w-5 h-5 rounded-full border-2 border-background shadow-sm ring-1 ring-black/5"
-                                    style={{
-                                        backgroundColor:
-                                            color === "White" ? "#ffffff" :
-                                                color === "Ivory" ? "#FFFFF0" :
-                                                    color === "Silver" ? "#C0C0C0" :
-                                                        color === "Natural" ? "#F5F5DC" :
-                                                            color === "Sage Green" ? "#9CAF88" :
-                                                                color === "Ocean Blue" ? "#0077BE" :
-                                                                    color === "Blush Pink" ? "#FFB6C1" :
-                                                                        color === "Navy" ? "#000080" :
-                                                                            color === "Gray" || color === "Light Gray" ? "#808080" :
-                                                                                "#E5E5E5",
-                                    }}
-                                    title={color}
-                                />
-                            ))}
-                            {product.colors && product.colors.length > 3 && (
-                                <div className="w-5 h-5 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[8px] font-medium text-muted-foreground">
-                                    +{product.colors.length - 3}
-                                </div>
-                            )}
-                        </div>
+
                     </div>
                 </div>
             </Card>

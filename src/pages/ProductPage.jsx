@@ -23,7 +23,7 @@ export default function ProductPage() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState("Queen");
-    const [selectedColor, setSelectedColor] = useState("");
+
     const [quantity, setQuantity] = useState(1);
     const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -42,28 +42,8 @@ export default function ProductPage() {
         : [];
     const images = rawImages.length > 0 ? rawImages : (product?.image ? [product.image] : []);
 
-    // 1. Sync Color -> Image
-    // When user selects a color, jump to that image index if it exists
-    useEffect(() => {
-        if (product?.colors && product.colors.includes(selectedColor)) {
-            const colorIndex = product.colors.indexOf(selectedColor);
-            if (images[colorIndex]) {
-                setActiveImageIndex(colorIndex);
-            }
-        }
-    }, [selectedColor, product, images]);
-
-    // 2. Sync Image -> Color (Optional, but good for "linking")
-    // When user slides image, if that index corresponds to a color, select it
-    // note: We use a check to avoid loops or overriding explicit user choice immediately if the user is just browsing images
-    // But since the user specifically asked "color should be link with the picture", let's force it.
-
     const handleImageChange = (newIndex) => {
         setActiveImageIndex(newIndex);
-        // Try to find color for this index
-        if (product?.colors && product.colors[newIndex]) {
-            setSelectedColor(product.colors[newIndex]);
-        }
     };
 
     // Fetch Product Data
@@ -75,7 +55,7 @@ export default function ProductPage() {
             const data = snapshot.val();
             if (data) {
                 setProduct({ ...data, id: id, firebaseKey: id });
-                setSelectedColor(data.colors?.[0] || "");
+                setProduct({ ...data, id: id, firebaseKey: id });
 
                 // Fetch Related Products (simple filter)
                 // Note: For production, this should be a query, but for now fetching all is ok as we have context
@@ -154,7 +134,7 @@ export default function ProductPage() {
             navigate("/login");
             return;
         }
-        addToCart(product, quantity, selectedSize, selectedColor, images[activeImageIndex]);
+        addToCart(product, quantity, selectedSize, images[activeImageIndex]);
     };
 
     const handleReviewSubmit = async ({ rating, comment }) => {
@@ -340,24 +320,7 @@ export default function ProductPage() {
                             {product.description}
                         </p>
 
-                        {/* Color Selection */}
-                        <div>
-                            <h3 className="font-medium mb-3">Color: {selectedColor}</h3>
-                            <div className="flex flex-wrap gap-3">
-                                {product.colors && product.colors.map((color) => (
-                                    <button
-                                        key={color}
-                                        onClick={() => setSelectedColor(color)}
-                                        className={`px-4 py-2 rounded-lg border-2 transition-all ${selectedColor === color
-                                            ? "border-primary bg-primary/10"
-                                            : "border-border hover:border-primary/50"
-                                            }`}
-                                    >
-                                        {color}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+
 
                         {/* Size Selection */}
                         <div>

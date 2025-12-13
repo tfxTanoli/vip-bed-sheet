@@ -21,13 +21,7 @@ export default function ProductsPage() {
     const [imageFiles, setImageFiles] = useState([]); // Changed from single file
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const AVAILABLE_COLORS = [
-        "White", "Ivory", "Gray", "Light Gray", "Navy",
-        "Blue", "Ocean Blue", "Teal", "Sage Green",
-        "Blush Pink", "Beige", "Natural", "Silver", "Charcoal", "Maroon",
-        "Black", "Red", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown",
-        "Light Pink"
-    ];
+
 
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -43,7 +37,6 @@ export default function ProductsPage() {
                 description: product.description || "",
                 image: product.image,
                 images: product.images || [], // Load existing images
-                colors: product.colors || [] // Load existing colors
             });
         } else {
             setEditingProduct(null);
@@ -54,22 +47,13 @@ export default function ProductsPage() {
                 description: "",
                 image: "",
                 images: [],
-                colors: []
             });
         }
         setIsModalOpen(true);
         setImageFiles([]);
     };
 
-    const handleColorChange = (color) => {
-        setFormData(prev => {
-            if (prev.colors.includes(color)) {
-                return { ...prev, colors: prev.colors.filter(c => c !== color) };
-            } else {
-                return { ...prev, colors: [...prev.colors, color] };
-            }
-        });
-    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -93,7 +77,7 @@ export default function ProductsPage() {
             setEditingProduct(null);
             setIsModalOpen(false);
             setEditingProduct(null);
-            setFormData({ name: "", price: "", category: "Classic", description: "", image: "", images: [], colors: [] });
+            setFormData({ name: "", price: "", category: "Classic", description: "", image: "", images: [] });
             setImageFiles([]);
         } catch (error) {
             console.error(error);
@@ -264,22 +248,7 @@ export default function ProductsPage() {
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-sm font-medium mb-2 block">Colors</label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {AVAILABLE_COLORS.map(color => (
-                                        <label key={color} className="flex items-center space-x-2 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                checked={formData.colors.includes(color)}
-                                                onChange={() => handleColorChange(color)}
-                                                className="rounded border-gray-300 text-primary focus:ring-primary"
-                                            />
-                                            <span className="text-sm text-foreground">{color}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
+
 
                             <div>
                                 <label className="text-sm font-medium mb-1 block">Images</label>

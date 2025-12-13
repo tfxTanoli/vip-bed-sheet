@@ -66,25 +66,11 @@ export function CartProvider({ children }) {
                 // Try to resolve the correct image based on color if possible
                 let correctImage = freshProduct.image;
 
-                // If item has a color, try to find matching image in fresh product data
-                if (item.color && freshProduct.colors && freshProduct.images) {
-                    const colorIndex = freshProduct.colors.indexOf(item.color);
-                    if (colorIndex >= 0 && freshProduct.images[colorIndex]) {
-                        correctImage = freshProduct.images[colorIndex];
-                    }
-                } else if (item.image && (!freshProduct.image || item.image !== freshProduct.image)) {
-                    // If we can't map by color, but item has a specific image (different from default), keep it? 
-                    // Better to rely on color mapping to be source of truth if available.
-                    // If simply keeping item.image, we risk stale URLs.
-                    // Let's rely on the Logic: Color -> Image.
-                }
-
                 return {
                     ...item,
-                    image: correctImage, // Update image based on fresh data + color logic
+                    image: correctImage,
                     price: freshProduct.price,
                     name: freshProduct.name,
-                    colors: freshProduct.colors || [] // Update available colors just in case
                 };
             }
             return item;
@@ -95,14 +81,13 @@ export function CartProvider({ children }) {
 
     // ...
 
-    const addToCart = (product, quantity = 1, size = "Queen", color = "", specificImage = null) => {
+    const addToCart = (product, quantity = 1, size = "Queen", specificImage = null) => {
         dispatch({
             type: "ADD_TO_CART",
             payload: {
                 ...product,
                 quantity,
                 size,
-                color,
                 image: specificImage || product.image // Use specific image if provided
             },
         });
