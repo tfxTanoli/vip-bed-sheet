@@ -24,7 +24,9 @@ export default function ProductsPage() {
     const AVAILABLE_COLORS = [
         "White", "Ivory", "Gray", "Light Gray", "Navy",
         "Blue", "Ocean Blue", "Teal", "Sage Green",
-        "Blush Pink", "Beige", "Natural", "Silver", "Charcoal"
+        "Blush Pink", "Beige", "Natural", "Silver", "Charcoal", "Maroon",
+        "Black", "Red", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown",
+        "Light Pink"
     ];
 
     const filteredProducts = products.filter(product =>
