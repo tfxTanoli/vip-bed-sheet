@@ -33,14 +33,14 @@ export default function HomePage() {
             {/* Hero Section */}
             <section className="relative min-h-[90vh] flex items-center overflow-hidden hero-gradient">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-overlay"></div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-32 relative z-10">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-8">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium animate-fade-in-up">
                                 <Sparkles className="w-4 h-4" />
                                 Premium Bedding Collection
                             </div>
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight animate-fade-in-up delay-100">
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight animate-fade-in-up delay-100">
                                 Sleep in{" "}
                                 <span className="gradient-text">Luxury</span>
                                 <br />
@@ -110,7 +110,7 @@ export default function HomePage() {
             <section className="py-20 md:py-32 bg-secondary/30 relative overflow-hidden">
                 <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
                         {features.map((feature, index) => {
                             const Icon = iconMap[feature.icon];
                             return (
@@ -172,7 +172,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="relative max-w-4xl mx-auto">
-                        <Card className="p-10 md:p-14 text-center glass-card border-none relative overflow-hidden">
+                        <Card className="p-6 md:p-14 text-center glass-card border-none relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500"></div>
                             <div className="flex justify-center mb-8">
                                 {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (

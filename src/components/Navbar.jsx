@@ -39,7 +39,7 @@ export default function Navbar() {
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
                             <Bed className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl md:text-2xl font-heading font-bold gradient-text">
+                        <span className="text-lg md:text-2xl font-heading font-bold gradient-text">
                             VIP Bed Sheets
                         </span>
                     </Link>
