@@ -5,11 +5,14 @@ import { Input } from "../../components/ui/Input";
 import { Card } from "../../components/ui/Card";
 import { useOrders } from "../../context/OrdersContext";
 import { formatPrice } from "../../lib/utils";
+import OrderDetailsModal from "../components/OrderDetailsModal";
 
 export default function OrdersPage() {
     const { orders, loading, updateOrderStatus } = useOrders();
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
@@ -27,6 +30,11 @@ export default function OrdersPage() {
         if (window.confirm(`Change order status to ${nextStatus}?`)) {
             await updateOrderStatus(orderId, nextStatus);
         }
+    };
+
+    const handleViewOrder = (order) => {
+        setSelectedOrder(order);
+        setIsModalOpen(true);
     };
 
     return (
@@ -97,8 +105,8 @@ export default function OrdersPage() {
                                             <button
                                                 onClick={() => handleStatusUpdate(order.id, order.status)}
                                                 className={`px-2 py-1 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity ${order.status === "Delivered" ? "bg-green-100 text-green-700" :
-                                                        order.status === "Pending" ? "bg-yellow-100 text-yellow-700" :
-                                                            "bg-blue-100 text-blue-700"
+                                                    order.status === "Pending" ? "bg-yellow-100 text-yellow-700" :
+                                                        "bg-blue-100 text-blue-700"
                                                     }`}
                                                 title="Click to change status"
                                             >
@@ -107,7 +115,13 @@ export default function OrdersPage() {
                                         </td>
                                         <td className="px-4 py-3 font-medium">{formatPrice(order.amount)}</td>
                                         <td className="px-4 py-3 text-right">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8"
+                                                onClick={() => handleViewOrder(order)}
+                                                title="View Details"
+                                            >
                                                 <Eye className="w-4 h-4" />
                                             </Button>
                                         </td>
@@ -118,6 +132,14 @@ export default function OrdersPage() {
                     </table>
                 </div>
             </Card>
+
+            {/* Order Details Modal */}
+            {isModalOpen && (
+                <OrderDetailsModal
+                    order={selectedOrder}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </div>
     );
 }
