@@ -285,6 +285,19 @@ export default function ProductPage() {
                                 {product.name}
                             </h1>
 
+                            {/* Stock Status Badge */}
+                            <div className="mb-4">
+                                {product.inStock === false ? (
+                                    <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-100 border-red-200">
+                                        Out of Stock
+                                    </Badge>
+                                ) : (
+                                    <Badge variant="outline" className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
+                                        In Stock
+                                    </Badge>
+                                )}
+                            </div>
+
                             {/* Rating */}
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center">
@@ -367,9 +380,14 @@ export default function ProductPage() {
 
                         {/* Actions */}
                         <div className="flex gap-4 pt-4">
-                            <Button size="lg" className="flex-1" onClick={handleAddToCart}>
+                            <Button
+                                size="lg"
+                                className="flex-1"
+                                onClick={handleAddToCart}
+                                disabled={product.inStock === false}
+                            >
                                 <ShoppingCart className="w-5 h-5 mr-2" />
-                                Add to Cart
+                                {product.inStock === false ? "Out of Stock" : "Add to Cart"}
                             </Button>
                             <Button variant="outline" size="lg" onClick={() => toggleFavorite(product.id)}>
                                 <Heart className={`w-5 h-5 ${isFavorite(product.id) ? "fill-current text-red-500" : ""}`} />
@@ -397,7 +415,7 @@ export default function ProductPage() {
                         {/* Product Features */}
                         {/* Product Features */}
                         <div>
-                            <h3 className="font-medium mb-3">Features</h3>
+                            {/* <h3 className="font-medium mb-3">Features</h3> */}
                             <div className="space-y-2">
                                 {product.features && product.features.map((feature, index) => (
                                     <div key={index} className="flex items-center gap-2">

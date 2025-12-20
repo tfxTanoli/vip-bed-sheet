@@ -18,7 +18,8 @@ export default function ProductsPage() {
         price: "",
         category: "Classic",
         description: "",
-        image: ""
+        image: "",
+        inStock: "true" // Default to true (string for select)
     });
     const [imageFiles, setImageFiles] = useState([]); // Changed from single file
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,6 +40,7 @@ export default function ProductsPage() {
                 description: product.description || "",
                 image: product.image,
                 images: product.images || [], // Load existing images
+                inStock: product.inStock === false ? "false" : "true",
             });
         } else {
             setEditingProduct(null);
@@ -49,6 +51,7 @@ export default function ProductsPage() {
                 description: "",
                 image: "",
                 images: [],
+                inStock: "true",
             });
         }
         setIsModalOpen(true);
@@ -67,12 +70,14 @@ export default function ProductsPage() {
             if (editingProduct) {
                 await updateProduct(editingProduct.id, {
                     ...formData,
-                    price: Number(formData.price)
+                    price: Number(formData.price),
+                    inStock: formData.inStock === "true"
                 }, filesArray);
             } else {
                 await addProduct({
                     ...formData,
-                    price: Number(formData.price)
+                    price: Number(formData.price),
+                    inStock: formData.inStock === "true"
                 }, filesArray);
             }
             setIsModalOpen(false);
@@ -157,10 +162,17 @@ export default function ProductsPage() {
                                         <td className="px-4 py-3 text-muted-foreground">{product.category}</td>
                                         <td className="px-4 py-3 font-medium">{formatPrice(product.price)}</td>
                                         <td className="px-4 py-3">
-                                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 whitespace-nowrap">
-                                                <span className="md:hidden">Stock</span>
-                                                <span className="hidden md:inline">In Stock</span>
-                                            </span>
+                                            {product.inStock === false ? (
+                                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 whitespace-nowrap">
+                                                    <span className="md:hidden">Out</span>
+                                                    <span className="hidden md:inline">Out of Stock</span>
+                                                </span>
+                                            ) : (
+                                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 whitespace-nowrap">
+                                                    <span className="md:hidden">Stock</span>
+                                                    <span className="hidden md:inline">In Stock</span>
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <div className="flex items-center justify-end gap-2">
@@ -248,6 +260,18 @@ export default function ProductsPage() {
                                         <option>Casual</option>
                                     </select>
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="text-sm font-medium mb-1 block">Stock Status</label>
+                                <select
+                                    className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    value={formData.inStock}
+                                    onChange={(e) => setFormData({ ...formData, inStock: e.target.value })}
+                                >
+                                    <option value="true">In Stock</option>
+                                    <option value="false">Out of Stock</option>
+                                </select>
                             </div>
 
                             <div>
